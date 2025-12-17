@@ -43,9 +43,12 @@ const calculateTDEEFromData = (weightData, dailyCalories, weeksBack = 4) => {
 
 const EliteCyclistWeightTracker = () => {
   const [showPhases, setShowPhases] = useState(true);
+  const [showWeightForm, setShowWeightForm] = useState(true);
+  const [newDate, setNewDate] = useState('');
+  const [newWeight, setNewWeight] = useState('');
 
-  // Weigh in data
-  const rawData = [
+  // Weigh in data - now as state so it can be updated
+  const [rawData, setRawData] = useState([
     { date: '9/10', weight: 255 },
     { date: '9/22', weight: 245 },
     { date: '10/9', weight: 238 },
@@ -67,7 +70,38 @@ const EliteCyclistWeightTracker = () => {
     { date: '11/29', weight: 216 },
     { date: '12/05', weight: 214 },
     { date: '12/12', weight: 213 }
-  ];
+  ]);
+
+  // Handle adding new weight entry
+  const handleAddWeight = (e) => {
+    e.preventDefault();
+
+    if (!newDate || !newWeight) {
+      alert('Please enter both date and weight');
+      return;
+    }
+
+    const weight = parseFloat(newWeight);
+    if (isNaN(weight) || weight <= 0) {
+      alert('Please enter a valid weight');
+      return;
+    }
+
+    // Add new entry and sort by date
+    const newEntry = { date: newDate, weight };
+    const updatedData = [...rawData, newEntry].sort((a, b) => {
+      const [aMonth, aDay] = a.date.split('/').map(Number);
+      const [bMonth, bDay] = b.date.split('/').map(Number);
+      const aDate = new Date(2025, aMonth - 1, aDay);
+      const bDate = new Date(2025, bMonth - 1, bDay);
+      return aDate - bDate;
+    });
+
+    setRawData(updatedData);
+    setNewDate('');
+    setNewWeight('');
+  };
+
 
   // calculating week
   const calculateWeekNumber = (dateString) => {
@@ -221,6 +255,55 @@ const EliteCyclistWeightTracker = () => {
           </p>
         </div>
 
+        {/* Add Weight Form */}
+        <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold text-gray-800">Add Weight Entry</h2>
+            <button
+              onClick={() => setShowWeightForm(!showWeightForm)}
+              className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
+            >
+              {showWeightForm ? 'Hide' : 'Show'} Form
+            </button>
+          </div>
+
+          {showWeightForm && (
+            <form onSubmit={handleAddWeight} className="flex flex-col md:flex-row gap-4 items-end">
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Date (M/D)
+                </label>
+                <input
+                  type="text"
+                  value={newDate}
+                  onChange={(e) => setNewDate(e.target.value)}
+                  placeholder="12/16"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                />
+              </div>
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Weight (lbs)
+                </label>
+                <input
+                  type="number"
+                  step="0.1"
+                  value={newWeight}
+                  onChange={(e) => setNewWeight(e.target.value)}
+                  placeholder="213"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                />
+              </div>
+              <button
+                type="submit"
+                className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition font-medium"
+              >
+                Add Entry
+              </button>
+            </form>
+          )}
+        </div>
+
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
           <div className="bg-white rounded-lg shadow p-6">
@@ -246,15 +329,7 @@ const EliteCyclistWeightTracker = () => {
 
         {/* Chart */}
         <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-semibold text-gray-800">Weight Trajectory</h2>
-            <button
-              onClick={() => setShowPhases(!showPhases)}
-              className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
-            >
-              {showPhases ? 'Hide' : 'Show'} Phase Zones
-            </button>
-          </div>
+          <h2 className="text-2xl font-semibold text-gray-800 mb-4">Weight Trajectory</h2>
 
           <ResponsiveContainer width="100%" height={500}>
             <LineChart data={completeWeeklyData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
@@ -292,12 +367,21 @@ const EliteCyclistWeightTracker = () => {
                 contentStyle={{ backgroundColor: 'rgba(255, 255, 255, 0.95)', border: '1px solid #ccc' }}
                 formatter={(value, name) => {
                   if (!value) return ['N/A', name];
+
+                  // Calculate BMI (height is 5'9" = 69 inches)
+                  const heightInInches = 69;
+                  const bmi = ((value / (heightInInches * heightInInches)) * 703).toFixed(1);
+
                   return [
-                    `${value} lbs`,
-                    name === 'weight' ? 'Actual Weight' : name === 'projected' ? 'Projected Weight' : name
+                    `${value} lbs (BMI: ${bmi})`,
+                    name === 'weight' ? 'Scale Weight' : name === 'projected' ? 'Projected Weight' : name
                   ];
                 }}
-                labelFormatter={(week) => `Week ${week}`}
+                labelFormatter={(week) => {
+                  const projDate = new Date(2025, 8, 10);
+                  projDate.setDate(projDate.getDate() + (week * 7));
+                  return `Week ${week} (${projDate.getMonth() + 1}/${projDate.getDate()})`;
+                }}
               />
               <Legend />
 
