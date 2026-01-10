@@ -42,72 +42,47 @@ const calculateTDEEFromData = (weightData, dailyCalories, weeksBack = 4) => {
 };
 
 const EliteCyclistWeightTracker = () => {
-  const [showPhases, setShowPhases] = useState(true);
-  const [showWeightForm, setShowWeightForm] = useState(true);
-  const [newDate, setNewDate] = useState('');
-  const [newWeight, setNewWeight] = useState('');
+  const [showPhases] = useState(true);
 
-  // Weigh in data - now as state so it can be updated
-  const [rawData, setRawData] = useState([
-    { date: '9/10', weight: 255 },
-    { date: '9/22', weight: 245 },
-    { date: '10/9', weight: 238 },
-    { date: '10/16', weight: 235 },
-    { date: '10/19', weight: 234 },
-    { date: '10/22', weight: 233 },
-    { date: '10/25', weight: 231 },
-    { date: '10/29', weight: 229 },
-    { date: '10/31', weight: 228 },
-    { date: '11/2', weight: 227 },
-    { date: '11/3', weight: 226 },
-    { date: '11/6', weight: 226 },
-    { date: '11/10', weight: 225 },
-    { date: '11/14', weight: 223 },
-    { date: '11/15', weight: 222 },
-    { date: '11/18', weight: 220 },
-    { date: '11/25', weight: 218 },
-    { date: '11/26', weight: 217 },
-    { date: '11/29', weight: 216 },
-    { date: '12/05', weight: 214 },
-    { date: '12/12', weight: 213 }
-  ]);
-
-  // Handle adding new weight entry
-  const handleAddWeight = (e) => {
-    e.preventDefault();
-
-    if (!newDate || !newWeight) {
-      alert('Please enter both date and weight');
-      return;
-    }
-
-    const weight = parseFloat(newWeight);
-    if (isNaN(weight) || weight <= 0) {
-      alert('Please enter a valid weight');
-      return;
-    }
-
-    // Add new entry and sort by date
-    const newEntry = { date: newDate, weight };
-    const updatedData = [...rawData, newEntry].sort((a, b) => {
-      const [aMonth, aDay] = a.date.split('/').map(Number);
-      const [bMonth, bDay] = b.date.split('/').map(Number);
-      const aDate = new Date(2025, aMonth - 1, aDay);
-      const bDate = new Date(2025, bMonth - 1, bDay);
-      return aDate - bDate;
-    });
-
-    setRawData(updatedData);
-    setNewDate('');
-    setNewWeight('');
-  };
-
+  // Weigh in data
+  const rawData = [
+    { date: '9/10/25', weight: 255 },
+    { date: '9/22/25', weight: 245 },
+    { date: '10/9/25', weight: 238 },
+    { date: '10/16/25', weight: 235 },
+    { date: '10/19/25', weight: 234 },
+    { date: '10/22/25', weight: 233 },
+    { date: '10/25/25', weight: 231 },
+    { date: '10/29/25', weight: 229 },
+    { date: '10/31/25', weight: 228 },
+    { date: '11/2/25', weight: 227 },
+    { date: '11/3/25', weight: 226 },
+    { date: '11/6/25', weight: 226 },
+    { date: '11/10/25', weight: 225 },
+    { date: '11/14/25', weight: 223 },
+    { date: '11/15/25', weight: 222 },
+    { date: '11/18/25', weight: 220 },
+    { date: '11/25/25', weight: 218 },
+    { date: '11/26/25', weight: 217 },
+    { date: '11/29/25', weight: 216 },
+    { date: '12/05/25', weight: 214 },
+    { date: '12/12/25', weight: 213 },
+    { date: '12/17/25', weight: 212 },
+    { date: '12/31/25', weight: 211 },
+    { date: '1/2/26', weight: 210 },
+    { date: '1/8/26', weight: 208 },
+    { date: '1/9/26', weight: 207 }
+  ];
 
   // calculating week
   const calculateWeekNumber = (dateString) => {
-    const [month, day] = dateString.split('/').map(Number);
+    const parts = dateString.split('/').map(Number);
+    const month = parts[0];
+    const day = parts[1];
+    const year = parts[2] ? (parts[2] < 100 ? 2000 + parts[2] : parts[2]) : 2025;
+
     const startDate = new Date(2025, 8, 10); // Sept 10, 2025
-    const currentDate = new Date(2025, month - 1, day);
+    const currentDate = new Date(year, month - 1, day);
     const diffTime = currentDate - startDate;
     const diffDays = diffTime / (1000 * 60 * 60 * 24);
     return Math.round((diffDays / 7) * 10) / 10;
@@ -115,12 +90,15 @@ const EliteCyclistWeightTracker = () => {
 
   // Add this to fix x-axis alignment
   const actualData = rawData.map(entry => {
-    const [month, day] = entry.date.split('/').map(Number);
-    const dateObj = new Date(2025, month - 1, day);
+    const parts = entry.date.split('/').map(Number);
+    const month = parts[0];
+    const day = parts[1];
+    const year = parts[2] ? (parts[2] < 100 ? 2000 + parts[2] : parts[2]) : 2025;
+    const dateObj = new Date(year, month - 1, day);
 
     return {
       ...entry,
-      date: `${dateObj.getMonth() + 1}/${dateObj.getDate()}`,  // normalize format
+      date: `${dateObj.getMonth() + 1}/${dateObj.getDate()}`,
       weekNumber: calculateWeekNumber(entry.date)
     };
   });
@@ -130,7 +108,7 @@ const EliteCyclistWeightTracker = () => {
 
   // Calculate current TDEE from 4-week moving average
   const tdeeData = calculateTDEEFromData(actualData, 1200, 4);
-  const currentTDEE = tdeeData?.tdee || 2000; // fallback if not enough data
+  const currentTDEE = tdeeData?.tdee || 2000;
 
   // Calculate projections based on WEIGHT milestones, not time
   const allProjections = [];
@@ -189,7 +167,37 @@ const EliteCyclistWeightTracker = () => {
     weekNumber += 1;
   }
 
+  // Maintenance at 170 until after L'Étape (July 19, 2026)
+  const letapeDate = new Date(2026, 6, 19); // July 19, 2026
+  const startDate = new Date(2025, 8, 10);
+  const letapeWeek = Math.floor((letapeDate - startDate) / (1000 * 60 * 60 * 24 * 7));
+
+  while (weekNumber <= letapeWeek) {
+    const weightDiff = currentWeight - 170;
+    const tdeeAdjustment = weightDiff * 22;
+    const tdee = currentTDEE - tdeeAdjustment;
+
+    const projDate = new Date(2025, 8, 10);
+    projDate.setDate(projDate.getDate() + (weekNumber * 7));
+
+    allProjections.push({
+      weekNumber: Math.round(weekNumber * 10) / 10,
+      weight: 170,
+      date: `${projDate.getMonth() + 1}/${projDate.getDate()}`,
+      phase: 'maintenance',
+      tdee: Math.round(tdee),
+      dailyCalories: Math.round(tdee),
+      deficit: 0,
+      weeklyLoss: 0
+    });
+
+    weekNumber += 1;
+  }
+
+
+
   // Phase 3: Final approach from 170 to 150 lbs
+  weight = 170;
   while (weight > 150) {
     const weightDiff = currentWeight - weight;
     const tdeeAdjustment = weightDiff * 22;
@@ -248,60 +256,11 @@ const EliteCyclistWeightTracker = () => {
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-800 mb-2">Weight Loss Journey</h1>
           <p className="text-xl text-gray-600">
-            {currentWeight} lbs → 150 lbs | Return to Elite Cycling Weight
+            {255} lbs → 150 lbs | Return to Elite Cycling Weight
           </p>
           <p className="text-sm text-gray-500 mt-1">
             Started Sept 10, 2025 • Week {currentWeekNum.toFixed(1)}
           </p>
-        </div>
-
-        {/* Add Weight Form */}
-        <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold text-gray-800">Add Weight Entry</h2>
-            <button
-              onClick={() => setShowWeightForm(!showWeightForm)}
-              className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
-            >
-              {showWeightForm ? 'Hide' : 'Show'} Form
-            </button>
-          </div>
-
-          {showWeightForm && (
-            <form onSubmit={handleAddWeight} className="flex flex-col md:flex-row gap-4 items-end">
-              <div className="flex-1">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Date (M/D)
-                </label>
-                <input
-                  type="text"
-                  value={newDate}
-                  onChange={(e) => setNewDate(e.target.value)}
-                  placeholder="12/16"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                />
-              </div>
-              <div className="flex-1">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Weight (lbs)
-                </label>
-                <input
-                  type="number"
-                  step="0.1"
-                  value={newWeight}
-                  onChange={(e) => setNewWeight(e.target.value)}
-                  placeholder="213"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                />
-              </div>
-              <button
-                type="submit"
-                className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition font-medium"
-              >
-                Add Entry
-              </button>
-            </form>
-          )}
         </div>
 
         {/* Stats Cards */}
