@@ -44,7 +44,7 @@ const calculateTDEEFromData = (weightData, dailyCalories, weeksBack = 4) => {
 const EliteCyclistWeightTracker = () => {
   const [showPhases] = useState(true);
 
-  // Weigh in data
+  // recorded weight data
   const rawData = [
     { date: '9/10/25', weight: 255 },
     { date: '9/22/25', weight: 245 },
@@ -71,7 +71,11 @@ const EliteCyclistWeightTracker = () => {
     { date: '12/31/25', weight: 211 },
     { date: '1/2/26', weight: 210 },
     { date: '1/8/26', weight: 208 },
-    { date: '1/9/26', weight: 207 }
+    { date: '1/9/26', weight: 207 },
+    { date: '1/10/26', weight: 206 },
+    { date: '1/15/26', weight: 205 },
+    { date: '1/17/26', weight: 204 },
+    { date: '1/30/26', weight: 203 }
   ];
 
   // calculating week
@@ -88,7 +92,7 @@ const EliteCyclistWeightTracker = () => {
     return Math.round((diffDays / 7) * 10) / 10;
   };
 
-  // Add this to fix x-axis alignment
+  // fix x-axis alignment
   const actualData = rawData.map(entry => {
     const parts = entry.date.split('/').map(Number);
     const month = parts[0];
@@ -110,12 +114,12 @@ const EliteCyclistWeightTracker = () => {
   const tdeeData = calculateTDEEFromData(actualData, 1200, 4);
   const currentTDEE = tdeeData?.tdee || 2000;
 
-  // Calculate projections based on WEIGHT milestones, not time
+  // Calculate projections based on weight, not time
   const allProjections = [];
   let weight = currentWeight;
   let weekNumber = Math.ceil(currentWeekNum);
 
-  // Phase 1: Aggressive deficit until 200 lbs
+  // Phase 1: Focused deficit until 200 lbs
   while (weight > 200) {
     const weightDiff = currentWeight - weight;
     const tdeeAdjustment = weightDiff * 22;
@@ -196,7 +200,7 @@ const EliteCyclistWeightTracker = () => {
 
 
 
-  // Phase 3: Final approach from 170 to 150 lbs
+  // Phase 3: Ideal body composition from 170 to 150 lbs
   weight = 170;
   while (weight > 150) {
     const weightDiff = currentWeight - weight;
@@ -232,10 +236,10 @@ const EliteCyclistWeightTracker = () => {
     projDate.setDate(projDate.getDate() + (week * 7));
     const dateStr = `${projDate.getMonth() + 1}/${projDate.getDate()}`;
 
-    // Find actual data for this week
+    // recorded data
     const actualPoint = actualData.find(d => Math.abs(d.weekNumber - week) < 0.5);
 
-    // Find projected data for this week
+    // projected data
     const projectedPoint = allProjections.find(d => d.weekNumber === week);
 
     completeWeeklyData.push({
@@ -266,18 +270,18 @@ const EliteCyclistWeightTracker = () => {
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
           <div className="bg-white rounded-lg shadow p-6">
-            <div className="text-sm text-gray-600 mb-1">Total Lost</div>
+            <div className="text-sm text-gray-600 mb-1">Total Burn</div>
             <div className="text-3xl font-bold text-purple-600">{totalLoss} lbs</div>
           </div>
           <div className="bg-white rounded-lg shadow p-6">
             <div className="text-sm text-gray-600 mb-1">Current Phase</div>
             <div className="text-2xl font-bold text-blue-600">Phase 1</div>
-            <div className="text-xs text-gray-500">Rapid Fat Loss</div>
+            <div className="text-xs text-gray-500">Focused Fat Loss</div>
           </div>
           <div className="bg-white rounded-lg shadow p-6">
-            <div className="text-sm text-gray-600 mb-1">To Overweight</div>
+            <div className="text-sm text-gray-600 mb-1">To Onederland</div>
             <div className="text-2xl font-bold text-green-600">{currentWeight - 200} lbs</div>
-            <div className="text-xs text-gray-500">Exit obesity range</div>
+            <div className="text-xs text-gray-500">obesity to overweight</div>
           </div>
           <div className="bg-white rounded-lg shadow p-6">
             <div className="text-sm text-gray-600 mb-1">L'Etape Goal</div>
@@ -288,7 +292,7 @@ const EliteCyclistWeightTracker = () => {
 
         {/* Chart */}
         <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-4">Weight Trajectory</h2>
+          <h2 className="text-2xl font-semibold text-gray-800 mb-4">Scale Weight</h2>
 
           <ResponsiveContainer width="100%" height={500}>
             <LineChart data={completeWeeklyData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
@@ -360,7 +364,7 @@ const EliteCyclistWeightTracker = () => {
                 connectNulls
               />
 
-              {/* Actual data - purple dots */}
+              {/* recorded data - purple dots */}
               <Line
                 type="monotone"
                 dataKey="weight"
@@ -378,13 +382,13 @@ const EliteCyclistWeightTracker = () => {
         {/* Phase Information */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-lg shadow p-6">
-            <h3 className="text-xl font-bold text-red-800 mb-3">Phase 1: Rapid Fat Loss</h3>
+            <h3 className="text-xl font-bold text-red-800 mb-3">Phase 1: Focused Fat Loss</h3>
             <div className="space-y-2 text-sm text-gray-700">
-              <p><strong>Target:</strong> {currentWeight} → 200 lbs</p>
+              <p><strong>Target:</strong> {currentWeight} → 200 lbs (Week {Math.round(currentWeekNum)})</p>
               <p><strong>Rate:</strong> 2.5 lbs/week</p>
-              <p><strong>Est. Duration:</strong> {Math.ceil((currentWeight - 200) / 2.5)} weeks</p>
-              <p><strong>Strategy:</strong> Maintain aggressive deficit</p>
-              <p><strong>Goal:</strong> Exit obesity range</p>
+              <p><strong>Est. Duration:</strong> {Math.ceil((255 - 200) / 2.5)} weeks</p>
+              <p><strong>Strategy:</strong> Aggressive deficit + Z2</p>
+              <p><strong>Goal:</strong> Exit obesity</p>
             </div>
           </div>
 
@@ -394,7 +398,7 @@ const EliteCyclistWeightTracker = () => {
               <p><strong>Target:</strong> 200 → 170 lbs (30 lbs)</p>
               <p><strong>Rate:</strong> 1.9 lbs/week</p>
               <p><strong>Est. Duration:</strong> {Math.ceil(30 / 1.9)} weeks</p>
-              <p><strong>Strategy:</strong> More calories for training</p>
+              <p><strong>Strategy:</strong> Progressive Overload + calories for training</p>
               <p><strong>Goal:</strong> Race-ready for L'Etape</p>
             </div>
           </div>
@@ -405,16 +409,16 @@ const EliteCyclistWeightTracker = () => {
               <p><strong>Target:</strong> 170 → 150 lbs (20 lbs)</p>
               <p><strong>Rate:</strong> 0.9 lbs/week</p>
               <p><strong>Est. Duration:</strong> {Math.ceil(20 / 0.9)} weeks</p>
-              <p><strong>Strategy:</strong> Sustainable deficit + training</p>
-              <p><strong>Goal:</strong> Return to elite racing weight</p>
+              <p><strong>Strategy:</strong> Moderate deficit + training</p>
+              <p><strong>Goal:</strong> Ideal body composition</p>
             </div>
           </div>
         </div>
 
-        {/* Footer note */}
+        {/* Footer overview */}
         <div className="mt-8 text-center text-sm text-gray-600">
-          <p>🚴‍♀️ Former elite cyclist returning to form | 5'9" | Race weight: 150-165 lbs</p>
-          <p className="mt-1">Monitoring: Blood glucose, heart rate, hematocrit | Daily workouts | Self-prepared meals</p>
+          <p>Former elite cyclist returning to form | 5'9" | Race weight: 150-165 lbs</p>
+          <p className="mt-1">Monitoring: Blood glucose, heart rate, hematocrit | Daily workouts | Home cookin'</p>
           <p className="mt-1 italic">Projections based on 4-week moving average TDEE with metabolic adaptation (22 cal/lb decline)</p>
         </div>
       </div>
