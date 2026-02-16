@@ -75,7 +75,12 @@ const EliteCyclistWeightTracker = () => {
     { date: '1/10/26', weight: 206 },
     { date: '1/15/26', weight: 205 },
     { date: '1/17/26', weight: 204 },
-    { date: '1/30/26', weight: 203 }
+    { date: '1/30/26', weight: 203 },
+    { date: '2/03/26', weight: 202 },
+    { date: '2/04/26', weight: 201 },
+    { date: '2/09/26', weight: 200 },
+    { date: '2/12/26', weight: 199 },
+    { date: '2/15/26', weight: 198 },
   ];
 
   // calculating week
@@ -275,19 +280,48 @@ const EliteCyclistWeightTracker = () => {
           </div>
           <div className="bg-white rounded-lg shadow p-6">
             <div className="text-sm text-gray-600 mb-1">Current Phase</div>
-            <div className="text-2xl font-bold text-blue-600">Phase 1</div>
-            <div className="text-xs text-gray-500">Focused Fat Loss</div>
+
+            <div className="text-2xl font-bold text-blue-600">
+              {currentWeight > 200 ? 'Phase 1' : currentWeight > 170 ? 'Phase 2' : 'Phase 3'}
+            </div>
+            <div className="text-xs text-gray-500">
+              {currentWeight > 200 ? 'Focused Fat Loss' : currentWeight > 170 ? 'Training Ramp' : 'Final Approach'}
+
+            </div>
+
           </div>
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="text-sm text-gray-600 mb-1">To Onederland</div>
-            <div className="text-2xl font-bold text-green-600">{currentWeight - 200} lbs</div>
-            <div className="text-xs text-gray-500">obesity to overweight</div>
-          </div>
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="text-sm text-gray-600 mb-1">L'Etape Goal</div>
-            <div className="text-2xl font-bold text-orange-600">170 lbs</div>
-            <div className="text-xs text-gray-500">By June 2026</div>
-          </div>
+          {currentWeight > 200 ? (
+            <div className="bg-white rounded-lg shadow p-6">
+              <div className="text-sm text-gray-600 mb-1">To Onederland</div>
+              <div className="text-2xl font-bold text-green-600">{currentWeight - 200} lbs</div>
+              <div className="text-xs text-gray-500">obesity to overweight</div>
+            </div>
+          ) : currentWeight > 170 ? (
+            <div className="bg-white rounded-lg shadow p-6">
+              <div className="text-sm text-gray-600 mb-1">To L'Étape Weight</div>
+              <div className="text-2xl font-bold text-orange-600">{currentWeight - 170} lbs</div>
+              <div className="text-xs text-gray-500">race-ready weight</div>
+            </div>
+          ) : (
+            <div className="bg-white rounded-lg shadow p-6">
+              <div className="text-sm text-gray-600 mb-1">To Goal Weight</div>
+              <div className="text-2xl font-bold text-green-600">{currentWeight - 150} lbs</div>
+
+            </div>
+          )}
+          {currentWeight > 170 ? (
+            <div className="bg-white rounded-lg shadow p-6">
+              <div className="text-sm text-gray-600 mb-1">L'Étape Goal</div>
+              <div className="text-2xl font-bold text-orange-600">170 lbs</div>
+              <div className="text-xs text-gray-500">By June 2026</div>
+            </div>
+          ) : (
+            <div className="bg-white rounded-lg shadow p-6">
+              <div className="text-sm text-gray-600 mb-1">Goal Weight</div>
+              <div className="text-2xl font-bold text-green-600">150 lbs</div>
+              <div className="text-xs text-gray-500">End of year</div>
+            </div>
+          )}
         </div>
 
         {/* Chart */}
