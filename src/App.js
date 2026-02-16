@@ -418,7 +418,7 @@ const EliteCyclistWeightTracker = () => {
           <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-lg shadow p-6">
             <h3 className="text-xl font-bold text-red-800 mb-3">Phase 1: Focused Fat Loss</h3>
             <div className="space-y-2 text-sm text-gray-700">
-              <p><strong>Target:</strong> {currentWeight} → 200 lbs (Week {Math.round(currentWeekNum)})</p>
+              <p><strong>Target:</strong> {255} → 200 lbs (Week {Math.round(currentWeekNum)})</p>
               <p><strong>Rate:</strong> 2.5 lbs/week</p>
               <p><strong>Est. Duration:</strong> {Math.ceil((255 - 200) / 2.5)} weeks</p>
               <p><strong>Strategy:</strong> Aggressive deficit + Z2</p>
