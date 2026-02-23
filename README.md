@@ -6,6 +6,9 @@ As scale weight changes, the phase cards update with new intermediate goals
 
 There is a Hover that shows BMI for each intermediate scale weight.
 
+<img width="1073" height="862" alt="websiteimg" src="https://github.com/user-attachments/assets/593c268d-e4f0-4f2a-b2a5-d7e90cf81aa0" />
+
+
 
 # Getting Started with Create React App
 
