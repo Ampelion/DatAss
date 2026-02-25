@@ -100,19 +100,28 @@ const EliteCyclistWeightTracker = () => {
   };
 
   // fix x-axis alignment
-  const actualData = rawData.map(entry => {
-    const parts = entry.date.split('/').map(Number);
-    const month = parts[0];
-    const day = parts[1];
-    const year = parts[2] ? (parts[2] < 100 ? 2000 + parts[2] : parts[2]) : 2025;
-    const dateObj = new Date(year, month - 1, day);
+  const actualData = [...rawData, ...extraData]
+    .sort((a, b) => {
+      const parseDate = (d) => {
+        const parts = d.split('/').map(Number);
+        const year = parts[2] < 100 ? 2000 + parts[2] : parts[2];
+        return new Date(year, parts[0] - 1, parts[1]);
+      };
+      return parseDate(a.date) - parseDate(b.date);
+    })
+    .map(entry => {
+      const parts = entry.date.split('/').map(Number);
+      const month = parts[0];
+      const day = parts[1];
+      const year = parts[2] ? (parts[2] < 100 ? 2000 + parts[2] : parts[2]) : 2025;
+      const dateObj = new Date(year, month - 1, day);
 
-    return {
-      ...entry,
-      date: `${dateObj.getMonth() + 1}/${dateObj.getDate()}`,
-      weekNumber: calculateWeekNumber(entry.date)
-    };
-  });
+      return {
+        ...entry,
+        date: `${dateObj.getMonth() + 1}/${dateObj.getDate()}`,
+        weekNumber: calculateWeekNumber(entry.date)
+      };
+    });
 
   const currentWeight = actualData[actualData.length - 1].weight;
   const currentWeekNum = actualData[actualData.length - 1].weekNumber;
