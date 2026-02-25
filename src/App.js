@@ -43,7 +43,9 @@ const calculateTDEEFromData = (weightData, dailyCalories, weeksBack = 4) => {
 
 const EliteCyclistWeightTracker = () => {
   const [showPhases] = useState(true);
-
+  const [newDate, setNewDate] = useState('');
+  const [newWeight, setNewWeight] = useState('');
+  const [extraData, setExtraData] = useState([]);
   // recorded weight data
   const rawData = [
     { date: '9/10/25', weight: 255 },
@@ -255,6 +257,13 @@ const EliteCyclistWeightTracker = () => {
     });
   }
 
+  const addWeightEntry = () => {
+    if (newWeight && newDate) {
+      setExtraData([...extraData, { date: newDate, weight: parseFloat(newWeight) }]);
+      setNewWeight('');
+      setNewDate('');
+    }
+  };
   const startWeight = actualData[0].weight;
   const totalLoss = startWeight - currentWeight;
 
@@ -412,7 +421,30 @@ const EliteCyclistWeightTracker = () => {
             </LineChart>
           </ResponsiveContainer>
         </div>
-
+        {/* New Entry Input */}
+        <div className="bg-white rounded-lg shadow p-6 mb-6 flex items-center gap-4">
+          <span className="text-gray-600 font-medium">New Scale Weight:</span>
+          <input
+            type="text"
+            placeholder="date (m/dd/yy)"
+            value={newDate}
+            onChange={(e) => setNewDate(e.target.value)}
+            className="border rounded px-3 py-2 text-gray-800 placeholder-gray-300 w-36"
+          />
+          <input
+            type="number"
+            placeholder="lbs"
+            value={newWeight}
+            onChange={(e) => setNewWeight(e.target.value)}
+            className="border rounded px-3 py-2 text-gray-800 placeholder-gray-300 w-24"
+          />
+          <button
+            onClick={addWeightEntry}
+            className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700"
+          >
+            Add
+          </button>
+        </div>
         {/* Phase Information */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-lg shadow p-6">
