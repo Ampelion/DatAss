@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine, ReferenceArea } from 'recharts';
 import { generateClient } from 'aws-amplify/api';
-import { createWeightEntry, deleteWeightEntry } from './graphql/mutations';
+import { createWeightEntry } from './graphql/mutations';
 import { listWeightEntries } from './graphql/queries';
 
 
@@ -65,6 +65,7 @@ const EliteCyclistWeightTracker = () => {
       }
     };
     loadEntries();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
 
@@ -432,29 +433,47 @@ const EliteCyclistWeightTracker = () => {
           </ResponsiveContainer>
         </div>
         {/* New Entry Input */}
-        <div className="bg-white rounded-lg shadow p-6 mb-6 flex items-center gap-4">
-          <span className="text-gray-600 font-medium">New Scale Weight:</span>
-          <input
-            type="text"
-            placeholder="date (m/dd/yy)"
-            value={newDate}
-            onChange={(e) => setNewDate(e.target.value)}
-            className="border rounded px-3 py-2 text-gray-800 placeholder-gray-300 w-36"
-          />
-          <input
-            type="number"
-            placeholder="lbs"
-            value={newWeight}
-            onChange={(e) => setNewWeight(e.target.value)}
-            className="border rounded px-3 py-2 text-gray-800 placeholder-gray-300 w-24"
-          />
-          <button
-            onClick={addWeightEntry}
-            className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700"
-          >
-            Add
-          </button>
-        </div>
+        {!unlocked ? (
+          <div className="bg-white rounded-lg shadow p-6 mb-6 flex items-center gap-4">
+            <input
+              type="password"
+              placeholder="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="border rounded px-3 py-2 text-gray-800 w-36"
+            />
+            <button
+              onClick={() => { if (password === 'lemuriens') setUnlocked(true); }}
+              className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700"
+            >
+              Unlock
+            </button>
+          </div>
+        ) : (
+          <div className="bg-white rounded-lg shadow p-6 mb-6 flex items-center gap-4">
+            <span className="text-gray-600 font-medium">New Scale Weight:</span>
+            <input
+              type="text"
+              placeholder="date (m/dd/yy)"
+              value={newDate}
+              onChange={(e) => setNewDate(e.target.value)}
+              className="border rounded px-3 py-2 text-gray-800 placeholder-gray-300 w-36"
+            />
+            <input
+              type="number"
+              placeholder="lbs"
+              value={newWeight}
+              onChange={(e) => setNewWeight(e.target.value)}
+              className="border rounded px-3 py-2 text-gray-800 placeholder-gray-300 w-24"
+            />
+            <button
+              onClick={addWeightEntry}
+              className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700"
+            >
+              Add
+            </button>
+          </div>
+        )}
         {/* Phase Information */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-lg shadow p-6">
