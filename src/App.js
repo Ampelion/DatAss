@@ -1,5 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine, ReferenceArea } from 'recharts';
+import { generateClient } from 'aws-amplify/api';
+import { createWeightEntry, deleteWeightEntry } from './graphql/mutations';
+import { listWeightEntries } from './graphql/queries';
+
 
 // Calculate TDEE from actual weight loss data using a 4-week moving window
 const calculateTDEEFromData = (weightData, dailyCalories, weeksBack = 4) => {
@@ -42,48 +46,25 @@ const calculateTDEEFromData = (weightData, dailyCalories, weeksBack = 4) => {
 };
 
 const EliteCyclistWeightTracker = () => {
+  const client = generateClient();
   const [showPhases] = useState(true);
   const [newDate, setNewDate] = useState('');
   const [newWeight, setNewWeight] = useState('');
   const [extraData, setExtraData] = useState([]);
-  // recorded weight data
-  const rawData = [
-    { date: '9/10/25', weight: 255 },
-    { date: '9/22/25', weight: 245 },
-    { date: '10/9/25', weight: 238 },
-    { date: '10/16/25', weight: 235 },
-    { date: '10/19/25', weight: 234 },
-    { date: '10/22/25', weight: 233 },
-    { date: '10/25/25', weight: 231 },
-    { date: '10/29/25', weight: 229 },
-    { date: '10/31/25', weight: 228 },
-    { date: '11/2/25', weight: 227 },
-    { date: '11/3/25', weight: 226 },
-    { date: '11/6/25', weight: 226 },
-    { date: '11/10/25', weight: 225 },
-    { date: '11/14/25', weight: 223 },
-    { date: '11/15/25', weight: 222 },
-    { date: '11/18/25', weight: 220 },
-    { date: '11/25/25', weight: 218 },
-    { date: '11/26/25', weight: 217 },
-    { date: '11/29/25', weight: 216 },
-    { date: '12/05/25', weight: 214 },
-    { date: '12/12/25', weight: 213 },
-    { date: '12/17/25', weight: 212 },
-    { date: '12/31/25', weight: 211 },
-    { date: '1/2/26', weight: 210 },
-    { date: '1/8/26', weight: 208 },
-    { date: '1/9/26', weight: 207 },
-    { date: '1/10/26', weight: 206 },
-    { date: '1/15/26', weight: 205 },
-    { date: '1/17/26', weight: 204 },
-    { date: '1/30/26', weight: 203 },
-    { date: '2/03/26', weight: 202 },
-    { date: '2/04/26', weight: 201 },
-    { date: '2/09/26', weight: 200 },
-    { date: '2/12/26', weight: 199 },
-    { date: '2/15/26', weight: 198 },
-  ];
+
+  useEffect(() => {
+    const loadEntries = async () => {
+      try {
+        const result = await client.graphql({ query: listWeightEntries });
+        const items = result.data.listWeightEntries.items;
+        setExtraData(items.map(item => ({ id: item.id, date: item.date, weight: item.weight })));
+      } catch (err) {
+        console.error('Error loading entries:', err);
+      }
+    };
+    loadEntries();
+  }, []);
+
 
   // calculating week
   const calculateWeekNumber = (dateString) => {
@@ -100,7 +81,7 @@ const EliteCyclistWeightTracker = () => {
   };
 
   // fix x-axis alignment
-  const actualData = [...rawData, ...extraData]
+  const actualData = [...extraData]
     .sort((a, b) => {
       const parseDate = (d) => {
         const parts = d.split('/').map(Number);
@@ -122,7 +103,7 @@ const EliteCyclistWeightTracker = () => {
         weekNumber: calculateWeekNumber(entry.date)
       };
     });
-
+  if (actualData.length === 0) return <div className="p-8 text-center text-gray-500">Loading...</div>;
   const currentWeight = actualData[actualData.length - 1].weight;
   const currentWeekNum = actualData[actualData.length - 1].weekNumber;
 
@@ -266,11 +247,29 @@ const EliteCyclistWeightTracker = () => {
     });
   }
 
-  const addWeightEntry = () => {
-    if (newWeight && newDate) {
-      setExtraData([...extraData, { date: newDate, weight: parseFloat(newWeight) }]);
+  const addWeightEntry = async () => {
+    if (!newWeight || !newDate) return;
+    const dateRegex = /^\d{1,2}\/\d{2}\/\d{2}$/;
+    if (!dateRegex.test(newDate)) {
+      alert('Date must be in m/dd/yy format (e.g. 2/25/26)');
+      return;
+    }
+    const w = parseFloat(newWeight);
+    if (isNaN(w) || w < 50 || w > 500) {
+      alert('Weight must be a number between 50 and 500 lbs');
+      return;
+    }
+    try {
+      const result = await client.graphql({
+        query: createWeightEntry,
+        variables: { input: { date: newDate, weight: w } }
+      });
+      const newItem = result.data.createWeightEntry;
+      setExtraData([...extraData, { id: newItem.id, date: newItem.date, weight: newItem.weight }]);
       setNewWeight('');
       setNewDate('');
+    } catch (err) {
+      console.error('Error saving entry:', err);
     }
   };
   const startWeight = actualData[0].weight;
