@@ -51,6 +51,8 @@ const EliteCyclistWeightTracker = () => {
   const [newDate, setNewDate] = useState('');
   const [newWeight, setNewWeight] = useState('');
   const [extraData, setExtraData] = useState([]);
+  const [unlocked, setUnlocked] = useState(false);
+  const [password, setPassword] = useState('');
 
   useEffect(() => {
     const loadEntries = async () => {
