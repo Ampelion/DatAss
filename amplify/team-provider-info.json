@@ -1,0 +1,20 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-weightlosstracker-dev-1f26b-authRole",
+      "UnauthRoleArn": "arn:aws:iam::365148417420:role/amplify-weightlosstracker-dev-1f26b-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::365148417420:role/amplify-weightlosstracker-dev-1f26b-authRole",
+      "Region": "us-west-2",
+      "DeploymentBucketName": "amplify-weightlosstracker-dev-1f26b-deployment",
+      "UnauthRoleName": "amplify-weightlosstracker-dev-1f26b-unauthRole",
+      "StackName": "amplify-weightlosstracker-dev-1f26b",
+      "StackId": "arn:aws:cloudformation:us-west-2:365148417420:stack/amplify-weightlosstracker-dev-1f26b/6051ef40-2187-11f1-8723-0af4579791bf",
+      "AmplifyAppId": "d1ahcz9ugovb7i"
+    },
+    "categories": {
+      "api": {
+        "weightlosstracker": {}
+      }
+    }
+  }
+}
