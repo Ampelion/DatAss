@@ -1,4 +1,4 @@
-type WeightEntry @model @auth(rules: [{ allow: public, provider: identityPool }]) {
+type WeightEntry @model {
   id: ID!
   date: String!
   weight: Float!
