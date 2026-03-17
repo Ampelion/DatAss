@@ -12,7 +12,7 @@ import { fetchAuthSession } from 'aws-amplify/auth';
 Amplify.configure({
   API: {
     GraphQL: {
-      endpoint: 'https://7j77zrcx2bdvfaz5iejdmifvhi.appsync-api.us-west-2.amazonaws.com/graphql',
+      endpoint: 'https://xga2cyn6s5hrnl2aiaul3lpnpi.appsync-api.us-west-2.amazonaws.com/graphql',
       region: 'us-west-2',
       defaultAuthMode: 'iam'
     }
