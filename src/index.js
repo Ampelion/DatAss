@@ -20,7 +20,8 @@ Amplify.configure({
   Auth: {
     Cognito: {
       identityPoolId: 'us-west-2:cdb2926d-aba0-41e4-ae0c-1d02f283b2cd',
-      allowGuestAccess: true
+      allowGuestAccess: true,
+      region: 'us-west-2'
     }
   }
 });
