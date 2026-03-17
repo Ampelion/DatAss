@@ -46,7 +46,7 @@ const calculateTDEEFromData = (weightData, dailyCalories, weeksBack = 4) => {
 };
 
 const EliteCyclistWeightTracker = () => {
-  const client = generateClient();
+  const client = generateClient({ authMode: 'iam' });
   const [showPhases] = useState(true);
   const [newDate, setNewDate] = useState('');
   const [newWeight, setNewWeight] = useState('');
