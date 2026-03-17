@@ -16,5 +16,23 @@
         "weightlosstracker": {}
       }
     }
+  },
+  "prod": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-weightlosstracker-prod-4b9f3-authRole",
+      "UnauthRoleArn": "arn:aws:iam::365148417420:role/amplify-weightlosstracker-prod-4b9f3-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::365148417420:role/amplify-weightlosstracker-prod-4b9f3-authRole",
+      "Region": "us-west-2",
+      "DeploymentBucketName": "amplify-weightlosstracker-prod-4b9f3-deployment",
+      "UnauthRoleName": "amplify-weightlosstracker-prod-4b9f3-unauthRole",
+      "StackName": "amplify-weightlosstracker-prod-4b9f3",
+      "StackId": "arn:aws:cloudformation:us-west-2:365148417420:stack/amplify-weightlosstracker-prod-4b9f3/45b25550-21ad-11f1-91cb-024ce52b9ba7",
+      "AmplifyAppId": "d3r2apzl9rmvgq"
+    },
+    "categories": {
+      "api": {
+        "weightlosstracker": {}
+      }
+    }
   }
 }
