@@ -1,21 +1,16 @@
-/* eslint-disable */
-// this is an auto generated file. This will be overwritten
-
 export const getWeightEntry = /* GraphQL */ `
   query GetWeightEntry($id: ID!) {
     getWeightEntry(id: $id) {
       id
       date
       weight
-      createdAt
-      updatedAt
-      __typename
     }
   }
 `;
+
 export const listWeightEntries = /* GraphQL */ `
   query ListWeightEntries(
-    $filter: ModelWeightEntryFilterInput
+    $filter: TableWeightEntryFilterInput
     $limit: Int
     $nextToken: String
   ) {
@@ -24,12 +19,8 @@ export const listWeightEntries = /* GraphQL */ `
         id
         date
         weight
-        createdAt
-        updatedAt
-        __typename
       }
       nextToken
-      __typename
     }
   }
 `;

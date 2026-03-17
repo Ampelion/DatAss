@@ -1,48 +1,27 @@
-/* eslint-disable */
-// this is an auto generated file. This will be overwritten
-
 export const createWeightEntry = /* GraphQL */ `
-  mutation CreateWeightEntry(
-    $input: CreateWeightEntryInput!
-    $condition: ModelWeightEntryConditionInput
-  ) {
-    createWeightEntry(input: $input, condition: $condition) {
+  mutation CreateWeightEntry($input: CreateWeightEntryInput!) {
+    createWeightEntry(input: $input) {
       id
       date
       weight
-      createdAt
-      updatedAt
-      __typename
     }
   }
 `;
+
 export const updateWeightEntry = /* GraphQL */ `
-  mutation UpdateWeightEntry(
-    $input: UpdateWeightEntryInput!
-    $condition: ModelWeightEntryConditionInput
-  ) {
-    updateWeightEntry(input: $input, condition: $condition) {
+  mutation UpdateWeightEntry($input: UpdateWeightEntryInput!) {
+    updateWeightEntry(input: $input) {
       id
       date
       weight
-      createdAt
-      updatedAt
-      __typename
     }
   }
 `;
+
 export const deleteWeightEntry = /* GraphQL */ `
-  mutation DeleteWeightEntry(
-    $input: DeleteWeightEntryInput!
-    $condition: ModelWeightEntryConditionInput
-  ) {
-    deleteWeightEntry(input: $input, condition: $condition) {
+  mutation DeleteWeightEntry($input: DeleteWeightEntryInput!) {
+    deleteWeightEntry(input: $input) {
       id
-      date
-      weight
-      createdAt
-      updatedAt
-      __typename
     }
   }
 `;
