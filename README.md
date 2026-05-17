@@ -1,4 +1,4 @@
-This is a weight loss and training app I wrote with a lot of help from ongoing coursework and Claude!
+This is a weight loss and training app I wrote with a lot of help from ongoing coursework and Claude.
 
 The idea is to track weight loss progress in balance with training demands for an endurance cycling event in July
 
