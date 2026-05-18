@@ -4,9 +4,13 @@ The idea is to track weight loss progress in balance with training demands for a
 
 Features:
 Dynamic weight loss projection on the graph based on current weight and caloric intake
+
 Rolling BMI on hover
+
 DynamoDB for data storage
+
 Data entry field with write-gate
+
 Cards for customized fitness program update dynamically according to phase
 
 
